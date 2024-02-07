@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:hogi_milk_admin/global_variables.dart';
 import 'package:hogi_milk_admin/models/constant.dart';
+import 'package:hogi_milk_admin/providers/auth_manager.dart';
 import 'package:hogi_milk_admin/screens/home/cancelled_screen.dart';
 import 'package:hogi_milk_admin/screens/home/delivery_screen.dart';
 import 'package:hogi_milk_admin/screens/home/order_screen.dart';
 import 'package:hogi_milk_admin/screens/setting/change_options.dart';
 import 'package:hogi_milk_admin/screens/setting/change_photo.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -113,11 +115,16 @@ class _HomeScreenState extends State<HomeScreen> {
             itemBuilder: (context) =>
                 ['Change Photo', 'Change Options', 'Log Out'].map((option) {
                   return PopupMenuItem(
-                      value: option,
-                      child: ListTile(
-                        leading: Icon(iconOptions[option]),
-                        title: Text(option),
-                      ));
+                    value: option,
+                    child: ListTile(
+                      leading: Icon(iconOptions[option]),
+                      title: Text(option),
+                    ),
+                    onTap: () async {
+                      Provider.of<AuthManager>(context, listen: false)
+                          .signOut();
+                    },
+                  );
                 }).toList())
       ],
     );

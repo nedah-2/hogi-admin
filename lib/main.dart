@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hogi_milk_admin/global_variables.dart';
-import 'package:hogi_milk_admin/screens/sign_in.dart';
+import 'package:hogi_milk_admin/providers/auth_manager.dart';
+import 'package:hogi_milk_admin/providers/option_manager.dart';
+import 'package:hogi_milk_admin/providers/order_manager.dart';
+import 'package:hogi_milk_admin/screens/authentication_screen.dart';
+import 'package:hogi_milk_admin/utils/global_scafflold.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -39,12 +44,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthManager()),
+        ChangeNotifierProvider(create: (_) => OptionManager()),
+        ChangeNotifierProvider(create: (_) => OrderManager()),
+        // Add more providers as needed
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        ),
+        scaffoldMessengerKey: MySnackBar.scaffoldMessengerKey,
+        home: const AuthenticationScreen(),
       ),
-      home: const SignInScreen(),
     );
   }
 }
