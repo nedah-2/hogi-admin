@@ -23,15 +23,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -55,6 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '760075089456',
     projectId: 'hogi-c01d9',
     authDomain: 'hogi-c01d9.firebaseapp.com',
+    databaseURL: 'https://hogi-c01d9-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'hogi-c01d9.appspot.com',
   );
 
@@ -63,6 +58,27 @@ class DefaultFirebaseOptions {
     appId: '1:760075089456:android:f2fc52a71b14171c241ff5',
     messagingSenderId: '760075089456',
     projectId: 'hogi-c01d9',
+    databaseURL: 'https://hogi-c01d9-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'hogi-c01d9.appspot.com',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyCC-ZkhfIrRRFJD5e2BX3jgAHbATuEXAeo',
+    appId: '1:760075089456:ios:1ab65dfd57058f41241ff5',
+    messagingSenderId: '760075089456',
+    projectId: 'hogi-c01d9',
+    databaseURL: 'https://hogi-c01d9-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'hogi-c01d9.appspot.com',
+    iosBundleId: 'com.example.hogiMilkAdmin',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyCC-ZkhfIrRRFJD5e2BX3jgAHbATuEXAeo',
+    appId: '1:760075089456:ios:41c3dc9a8d36d327241ff5',
+    messagingSenderId: '760075089456',
+    projectId: 'hogi-c01d9',
+    databaseURL: 'https://hogi-c01d9-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'hogi-c01d9.appspot.com',
+    iosBundleId: 'com.example.hogiMilkAdmin.RunnerTests',
   );
 }

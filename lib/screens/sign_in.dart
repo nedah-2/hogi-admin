@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hogi_milk_admin/providers/auth_manager.dart';
 import 'package:hogi_milk_admin/screens/reset_password.dart';
+import 'package:hogi_milk_admin/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -91,15 +92,8 @@ class _SignInScreenState extends State<SignInScreen> {
           const SizedBox(height: 16),
           _buildForgotPasswordLink(context),
           const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  elevation: 8,
-                  shadowColor: Colors.green[200],
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12))),
+          CustomButton(
+              label: 'LOGIN',
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
                   // Perform sign-in
@@ -108,9 +102,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     passwordController.text,
                   );
                 }
-              },
-              child: const Text('LOGIN'),
-            ),
+              }
           ),
         ],
       ),

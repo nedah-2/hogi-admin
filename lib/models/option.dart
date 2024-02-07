@@ -1,9 +1,8 @@
 class Option{
-  late final String id;
   final String count;
   final String price;
 
-  Option({required this.id,required this.count,required this.price});
+  Option({required this.count,required this.price});
 
   Map<String,dynamic> toJson(){
     return {
@@ -12,7 +11,7 @@ class Option{
     };
   }
 
-  factory Option.fromJson(String id,Map<String,dynamic> json){
-    return Option(id: id, count: json['count'], price: json['price']);
+  factory Option.fromJson(Map<String,dynamic> json){
+    return Option(count: json['count'], price: json['price']);
   }
 }

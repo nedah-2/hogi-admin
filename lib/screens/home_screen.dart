@@ -1,13 +1,18 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hogi_milk_admin/global_variables.dart';
 import 'package:hogi_milk_admin/models/constant.dart';
+import 'package:hogi_milk_admin/models/order.dart';
 import 'package:hogi_milk_admin/providers/auth_manager.dart';
+import 'package:hogi_milk_admin/providers/order_manager.dart';
 import 'package:hogi_milk_admin/screens/home/cancelled_screen.dart';
 import 'package:hogi_milk_admin/screens/home/delivery_screen.dart';
-import 'package:hogi_milk_admin/screens/home/order_screen.dart';
+import 'package:hogi_milk_admin/screens/search_order.dart';
 import 'package:hogi_milk_admin/screens/setting/change_options.dart';
 import 'package:hogi_milk_admin/screens/setting/change_photo.dart';
 import 'package:provider/provider.dart';
+import 'home/order_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,7 +29,6 @@ const iconOptions = {
 
 class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 0;
-
   final screens = const [OrderScreen(), CancelledScreen(), DeliveryScreen()];
 
   _HomeScreenState() {
@@ -56,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         elevation: 10,
         currentIndex: currentIndex,
+        selectedItemColor: [confirmColor,dangerColor,successColor][currentIndex],
         onTap: (newIndex) => setState(() => currentIndex = newIndex),
         items: const [
           BottomNavigationBarItem(
@@ -69,17 +74,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildSearchBar() {
-    return SizedBox(
-      width: double.infinity,
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-        surfaceTintColor: Colors.white,
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-          child: Text(
-            'Search Customer...',
-            style: TextStyle(color: Colors.black54),
+    return GestureDetector(
+      onTap: ()=> showSearch(context: context, delegate: SearchOrder()),
+      child: SizedBox(
+        width: double.infinity,
+        child: Card(
+          elevation: 4,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          surfaceTintColor: Colors.white,
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+            child: Text(
+              'Search Customer...',
+              style: TextStyle(color: Colors.black54),
+            ),
           ),
         ),
       ),
@@ -87,14 +95,31 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   AppBar buildAppBar(BuildContext context) {
+    final provider = Provider.of<OrderManager>(context,listen: false);
     return AppBar(
       centerTitle: false,
-      title: Text(
-        'HOGI',
-        style: TextStyle(
-            color: Theme.of(context).primaryColor,
-            fontSize: 22,
-            fontWeight: FontWeight.bold),
+      title: GestureDetector(
+        onTap: (){
+          Random random = Random();
+          Order newOrder = Order(
+              id: '1234',
+              name: demoItems[random.nextInt(demoItems.length)],
+              phone: random.nextInt(100000000).toString(),
+              address: 'No.32, U Shwe Kaung Street, Yan Kin Township, Yangon',
+              count: random.nextInt(10).toString(),
+              totalPrice: '${random.nextInt(10000)} MMK',
+              date: '${DateTime.now()}',
+              status: [OrderStatus.ordered,OrderStatus.confirmed,OrderStatus.cancelled,OrderStatus.delivered][random.nextInt(4)]
+          );
+          provider.createOrder(newOrder);
+        },
+        child: Text(
+          'HOGI',
+          style: TextStyle(
+              color: Theme.of(context).primaryColor,
+              fontSize: 22,
+              fontWeight: FontWeight.bold),
+        ),
       ),
       actions: [
         PopupMenuButton<String>(
@@ -108,10 +133,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   gotoScreen(context, const ChangeOptions());
                   break;
                 default:
-                //log out
+                  Provider.of<AuthManager>(context, listen: false).signOut();
               }
             },
-            icon: const Icon(Icons.settings),
+            icon: Icon(Icons.settings,color: Theme.of(context).primaryColor),
             itemBuilder: (context) =>
                 ['Change Photo', 'Change Options', 'Log Out'].map((option) {
                   return PopupMenuItem(
@@ -120,10 +145,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       leading: Icon(iconOptions[option]),
                       title: Text(option),
                     ),
-                    onTap: () async {
-                      Provider.of<AuthManager>(context, listen: false)
-                          .signOut();
-                    },
                   );
                 }).toList())
       ],

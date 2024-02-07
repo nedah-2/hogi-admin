@@ -1,12 +1,12 @@
 class Order{
-  late final String id;
+  String id;
   final String name;
   final String phone;
   final String address;
   final String count;
   final String totalPrice;
   final String date;
-  late final String status;
+  String status;
 
   Order({
     required this.id,

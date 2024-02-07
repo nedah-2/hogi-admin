@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hogi_milk_admin/models/constant.dart';
+import 'package:intl/intl.dart';
 
 class InputField extends StatelessWidget {
   const InputField(
@@ -18,6 +20,7 @@ class InputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.all(8),
       child: TextFormField(
@@ -25,16 +28,23 @@ class InputField extends StatelessWidget {
         controller: controller,
         keyboardType: type,
         maxLines: maxLines,
+        onChanged: (String str){
+          controller.text = formatAmount(str.replaceAll(',', ''));
+        },
         validator: (String? data) {
           if (data == null || data.isEmpty) {
-            return 'Please Fill This Form';
+            showMessage(context, 'Please fill all forms');
           }
           return null;
         },
         enableInteractiveSelection: false,
+
         decoration: InputDecoration(
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          isDense: true,
+          contentPadding: const EdgeInsets.all(8),
           constraints: BoxConstraints.tight(const Size.fromHeight(65)),
-          labelText: label,
+          hintText: label,
           border: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(10))),
           suffixIcon: suffixIcon,

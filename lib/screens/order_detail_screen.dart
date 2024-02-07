@@ -1,60 +1,92 @@
 import 'package:flutter/material.dart';
 import 'package:hogi_milk_admin/models/constant.dart';
+import 'package:provider/provider.dart';
 
-final statusColor = {
-  'Pending': pendingColor,
-  'Cancelled': dangerColor,
-  'Confirmed': successColor
-};
-
-const String orderStatus = 'Pending';
+import '../models/order.dart';
+import '../providers/order_manager.dart';
 
 class OrderDetailScreen extends StatelessWidget {
-  const OrderDetailScreen({super.key});
+  const OrderDetailScreen({super.key,required this.orderId});
+  final String orderId;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(centerTitle: true, title: const Text('Order Detail')),
-      body: ListView(
-        children: [
-          buildInfoTile(title: 'Name', content: 'U Mg Mg Aye'),
-          buildInfoTile(title: 'Phone Number', content: '09738728393'),
-          buildInfoTile(title: 'Quantity', content: '3 Items'),
-          buildInfoTile(
-              title: 'Address',
-              content: 'No.32, U Shwe Kaung Street, Yan Kin Township, Yangon'),
-          buildInfoTile(title: 'Order Date', content: 'Friday,Jan 10,2024'),
-          ListTile(
-            title: const Text('Order Status',
-                style: const TextStyle(color: Colors.black54)),
-            subtitle: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: ['Pending', 'Cancelled', 'Confirmed'].map((status) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: status == orderStatus
-                            ? statusColor[status]
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(6)),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Text(
-                      status,
-                      style: TextStyle(
-                          color: status == orderStatus
-                              ? Colors.white
-                              : Colors.black),
-                    ),
+    return Consumer<OrderManager>(
+        builder: (context,data,child){
+          Order order = data.getOrderById(orderId);
+          return Scaffold(
+            appBar: AppBar(centerTitle: true, title: const Text('Order Detail')),
+            body: ListView(
+              children: [
+                buildInfoTile(title: 'Name', content: order.name),
+                buildInfoTile(title: 'Phone Number', content: order.phone),
+                buildInfoTile(title: 'Quantity', content: '${order.count} Items'),
+                buildInfoTile(
+                    title: 'Address',
+                    content: order.address),
+                buildInfoTile(title: 'Order Date', content: 'Friday,Jan 10,2024'),
+                ListTile(
+                  title: const Text('Order Status',
+                      style: TextStyle(color: Colors.black54)),
+                  subtitle: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: ['Ordered', 'Cancelled', 'Confirmed','Delivered'].map((status) {
+                      return GestureDetector(
+                        onTap: status == order.status ? null : (){
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                backgroundColor: Colors.white,
+                                surfaceTintColor: Colors.white,
+                                title: const Text('Update Status Alert'),
+                                content: Text('Are you sure you want to mark this order as $status?'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: ()=> Navigator.of(context).pop(),
+                                      child: const Text('No')
+                                  ),
+                                  TextButton(
+                                      onPressed: () async {
+                                        await Provider.of<OrderManager>(context,listen: false).updateOrderStatus(order.id,status).then((value){
+                                          Navigator.of(context).pop();
+                                          showMessage(context, 'Order Status Updated');
+                                        });
+                                      },
+                                      child: Text('Yes',style: TextStyle(color: dangerColor),)
+                                  ),
+                                ],
+                              )
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 24),
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)
+                            ),
+                            surfaceTintColor: Colors.transparent,
+                            elevation: 0,
+                            color: status == order.status ? colors[status] : Colors.white,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                status,
+                                style: TextStyle(
+                                    color: status == order.status
+                                        ? Colors.white
+                                        : Colors.black),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
                   ),
-                );
-              }).toList(),
+                )
+              ],
             ),
-          )
-        ],
-      ),
+          );
+        }
     );
   }
 
