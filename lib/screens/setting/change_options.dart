@@ -88,7 +88,7 @@ class _ChangeOptionsState extends State<ChangeOptions> {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             SizedBox(
-                                              width: 100,
+                                              width: 58,
                                               child: InputField(
                                                 label: 'Item',
                                                 type: TextInputType.number,

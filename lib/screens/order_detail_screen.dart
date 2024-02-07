@@ -32,8 +32,8 @@ class OrderDetailScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: ['Ordered', 'Cancelled', 'Confirmed','Delivered'].map((status) {
                       return GestureDetector(
-                        onTap: status == order.status ? null : (){
-                          showDialog(
+                        onTap: status == order.status ? null : () async {
+                          await showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
                                 backgroundColor: Colors.white,
@@ -47,7 +47,7 @@ class OrderDetailScreen extends StatelessWidget {
                                   ),
                                   TextButton(
                                       onPressed: () async {
-                                        await Provider.of<OrderManager>(context,listen: false).updateOrderStatus(order.id,status).then((value){
+                                        await Provider.of<OrderManager>(context,listen: false).updateOrderStatus(order.id,status).then((_){
                                           Navigator.of(context).pop();
                                           showMessage(context, 'Order Status Updated');
                                         });
@@ -68,10 +68,12 @@ class OrderDetailScreen extends StatelessWidget {
                             elevation: 0,
                             color: status == order.status ? colors[status] : Colors.white,
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(4.0),
                               child: Text(
                                 status,
                                 style: TextStyle(
+                                  fontSize: 12,
+                                    fontWeight: FontWeight.w400,
                                     color: status == order.status
                                         ? Colors.white
                                         : Colors.black),

@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
         // Add more providers as needed
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'HOGI Admin',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),

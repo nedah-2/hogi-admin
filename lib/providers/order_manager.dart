@@ -25,21 +25,14 @@ class OrderManager with ChangeNotifier{
     return [...orders.reversed.where((o) => o.status == OrderStatus.confirmed),...orders.reversed.where((o) => o.status == OrderStatus.delivered).toList()];
   }
 
-  void setDataFromSnapshot(snapshot){
+  void setDataFromSnapshot(List<Order> items){
     orders.clear();
-    final data = snapshot.value;
-    if(data == null){
-      return;
-    }
-    Map<dynamic, dynamic> orderData = data as Map<dynamic, dynamic>;
-    orderData.forEach((key, value) {
-      orders.add(Order.fromJson(key, Map<String, dynamic>.from(value)));
-    });
+    orders = items;
     notifyListeners();
   }
 
   Future<void> fetchOrders() async {
-
+    orders.clear();
     orderRef.onValue.listen((DatabaseEvent event) {
       print(event);
       if(event.snapshot.value == null){

@@ -26,12 +26,11 @@ class OptionManager with ChangeNotifier{
     final data = snapshot.value as List<dynamic>;
 
     for (var element in data) {
-        options.add(Option(count: element['count'], price: element['price'].toString()));
+        options.add(Option(count: element['count'], price: element['price']));
     }
 
-
-    countControllers = List.generate(options.length, (index) => TextEditingController(text: options[index].count));
-    priceControllers = List.generate(options.length, (index) => TextEditingController(text: options[index].price));
+    countControllers = List.generate(options.length, (index) => TextEditingController(text: formatAmount(options[index].count.toString())));
+    priceControllers = List.generate(options.length, (index) => TextEditingController(text: formatAmount(options[index].price.toString())));
     notifyListeners();
   }
 
@@ -40,7 +39,7 @@ class OptionManager with ChangeNotifier{
     await ref.set(
       [
         for(int i = 0;i < countControllers.length ; i++)
-          Option(count: countControllers[i].text.trim(), price: '${priceControllers[i].text.trim()} Ks').toJson()
+          Option(count: int.parse(countControllers[i].text.trim()), price: int.parse(priceControllers[i].text.trim().replaceAll(',',''))).toJson()
       ]
     );
 

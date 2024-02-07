@@ -1,6 +1,6 @@
 class Option{
-  final String count;
-  final String price;
+  final int count;
+  final int price;
 
   Option({required this.count,required this.price});
 
