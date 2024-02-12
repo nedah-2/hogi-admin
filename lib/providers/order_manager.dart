@@ -28,7 +28,6 @@ class OrderManager with ChangeNotifier{
   void setDataFromSnapshot(List<Order> items){
     orders.clear();
     orders = items;
-    notifyListeners();
   }
 
   Future<void> fetchOrders() async {
@@ -46,16 +45,7 @@ class OrderManager with ChangeNotifier{
       });
     });
 
-    // final snapshot = await _database.ref('orders').get();
 
-
-    // if (snapshot.exists) {
-    //   Map<dynamic, dynamic> orderData =
-    //   snapshot.value as Map<dynamic, dynamic>;
-    //   orderData.forEach((key, value) {
-    //     items.add(Order.fromJson(key, Map<String, dynamic>.from(value)));
-    //   });
-    // }
     notifyListeners();
   }
 

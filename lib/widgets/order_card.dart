@@ -53,8 +53,8 @@ class OrderCard extends StatelessWidget {
                                   ),
                                   TextButton(
                                       onPressed: () async {
+                                        Navigator.of(context).pop();
                                         await Provider.of<OrderManager>(context,listen: false).deleteOrder(order.id).then((value){
-                                          Navigator.of(context).pop();
                                           showMessage(context, 'Order Deleted');
                                         });
                                       },

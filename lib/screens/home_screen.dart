@@ -12,6 +12,7 @@ import 'package:hogi_milk_admin/screens/search_order.dart';
 import 'package:hogi_milk_admin/screens/setting/change_options.dart';
 import 'package:hogi_milk_admin/screens/setting/change_photo.dart';
 import 'package:provider/provider.dart';
+import '../widgets/empty_widget.dart';
 import 'home/order_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -29,7 +30,6 @@ const iconOptions = {
 
 class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 0;
-  final screens = const [OrderScreen(), CancelledScreen(), DeliveryScreen()];
 
   _HomeScreenState() {
     // subscribe to the message stream fed by foreground message handler
@@ -46,16 +46,45 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<OrderManager>(context,listen: false);
+
     return Scaffold(
       appBar: buildAppBar(context),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [buildSearchBar(), screens[currentIndex]],
-          ),
-        ),
+      body: StreamBuilder(
+        stream: provider.orderRef.onValue,
+        builder: (context,snapshot){
+          if(snapshot.hasData){
+            List<Order> orders = [];
+            if(snapshot.data!.snapshot.value != null){
+              Map<dynamic, dynamic> orderData = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+              orderData.forEach((key, value) {
+                orders.add(Order.fromJson(key, Map<String, dynamic>.from(value)));
+              });
+            }
+
+            List<Order> canceledOrders = orders.reversed.where((o) => o.status == OrderStatus.cancelled).toList();
+            List<Order> deliveredOrders = orders.reversed.where((o) => o.status == OrderStatus.confirmed || o.status == OrderStatus.delivered).toList();
+
+            final screens = [
+              OrderScreen(orders: orders),
+              CancelledScreen(orders: canceledOrders,),
+              DeliveryScreen(orders: deliveredOrders)
+            ];
+
+            provider.setDataFromSnapshot(orders);
+            return orders.isEmpty ? const EmptyWidget() : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [buildSearchBar(), screens[currentIndex]],
+                ),
+              ),
+            );
+          }else{
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         elevation: 10,
