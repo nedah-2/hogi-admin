@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:hogi_milk_admin/global_variables.dart';
 import 'package:hogi_milk_admin/models/constant.dart';
 import 'package:hogi_milk_admin/models/order.dart';
 import 'package:hogi_milk_admin/providers/auth_manager.dart';
@@ -31,57 +30,56 @@ const iconOptions = {
 class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 0;
 
-  _HomeScreenState() {
-    // subscribe to the message stream fed by foreground message handler
-    messageStreamController.listen((message) {
-      setState(() {
-        if (message.notification != null) {
-          print('Received a notification message');
-        } else {
-          print('Received a data message: ${message.data}');
-        }
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<OrderManager>(context,listen: false);
+    final provider = Provider.of<OrderManager>(context, listen: false);
 
     return Scaffold(
       appBar: buildAppBar(context),
       body: StreamBuilder(
         stream: provider.orderRef.onValue,
-        builder: (context,snapshot){
-          if(snapshot.hasData){
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
             List<Order> orders = [];
-            if(snapshot.data!.snapshot.value != null){
-              Map<dynamic, dynamic> orderData = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
+            if (snapshot.data!.snapshot.value != null) {
+              Map<dynamic, dynamic> orderData =
+                  snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
               orderData.forEach((key, value) {
-                orders.add(Order.fromJson(key, Map<String, dynamic>.from(value)));
+                orders
+                    .add(Order.fromJson(key, Map<String, dynamic>.from(value)));
               });
             }
 
-            List<Order> canceledOrders = orders.reversed.where((o) => o.status == OrderStatus.cancelled).toList();
-            List<Order> deliveredOrders = orders.reversed.where((o) => o.status == OrderStatus.confirmed || o.status == OrderStatus.delivered).toList();
+            List<Order> canceledOrders = orders.reversed
+                .where((o) => o.status == OrderStatus.cancelled)
+                .toList();
+            List<Order> deliveredOrders = orders.reversed
+                .where((o) =>
+                    o.status == OrderStatus.confirmed ||
+                    o.status == OrderStatus.delivered)
+                .toList();
 
             final screens = [
               OrderScreen(orders: orders),
-              CancelledScreen(orders: canceledOrders,),
+              CancelledScreen(
+                orders: canceledOrders,
+              ),
               DeliveryScreen(orders: deliveredOrders)
             ];
 
             provider.setDataFromSnapshot(orders);
-            return orders.isEmpty ? const EmptyWidget() : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [buildSearchBar(), screens[currentIndex]],
-                ),
-              ),
-            );
-          }else{
+            return orders.isEmpty
+                ? const EmptyWidget()
+                : SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [buildSearchBar(), screens[currentIndex]],
+                      ),
+                    ),
+                  );
+          } else {
             return const Center(child: CircularProgressIndicator());
           }
         },
@@ -89,7 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         elevation: 10,
         currentIndex: currentIndex,
-        selectedItemColor: [confirmColor,dangerColor,successColor][currentIndex],
+        selectedItemColor: [
+          confirmColor,
+          dangerColor,
+          successColor
+        ][currentIndex],
         onTap: (newIndex) => setState(() => currentIndex = newIndex),
         items: const [
           BottomNavigationBarItem(
@@ -104,12 +106,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget buildSearchBar() {
     return GestureDetector(
-      onTap: ()=> showSearch(context: context, delegate: SearchOrder()),
+      onTap: () => showSearch(context: context, delegate: SearchOrder()),
       child: SizedBox(
         width: double.infinity,
         child: Card(
           elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           surfaceTintColor: Colors.white,
           child: const Padding(
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -124,11 +127,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   AppBar buildAppBar(BuildContext context) {
-    final provider = Provider.of<OrderManager>(context,listen: false);
+    final provider = Provider.of<OrderManager>(context, listen: false);
     return AppBar(
       centerTitle: false,
       title: GestureDetector(
-        onTap: (){
+        onTap: () {
           Random random = Random();
           Order newOrder = Order(
               id: '1234',
@@ -138,8 +141,12 @@ class _HomeScreenState extends State<HomeScreen> {
               count: random.nextInt(10).toString(),
               totalPrice: '${random.nextInt(10000)} MMK',
               date: '${DateTime.now()}',
-              status: [OrderStatus.ordered,OrderStatus.confirmed,OrderStatus.cancelled,OrderStatus.delivered][random.nextInt(4)]
-          );
+              status: [
+                OrderStatus.ordered,
+                OrderStatus.confirmed,
+                OrderStatus.cancelled,
+                OrderStatus.delivered
+              ][random.nextInt(4)]);
           provider.createOrder(newOrder);
         },
         child: Text(
@@ -165,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Provider.of<AuthManager>(context, listen: false).signOut();
               }
             },
-            icon: Icon(Icons.settings,color: Theme.of(context).primaryColor),
+            icon: Icon(Icons.settings, color: Theme.of(context).primaryColor),
             itemBuilder: (context) =>
                 ['Change Photo', 'Change Options', 'Log Out'].map((option) {
                   return PopupMenuItem(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hogi_milk_admin/models/constant.dart';
-import 'package:intl/intl.dart';
 
 class InputField extends StatelessWidget {
   const InputField(
@@ -20,7 +19,6 @@ class InputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: const EdgeInsets.all(8),
       child: TextFormField(
@@ -28,7 +26,7 @@ class InputField extends StatelessWidget {
         controller: controller,
         keyboardType: type,
         maxLines: maxLines,
-        onChanged: (String str){
+        onChanged: (String str) {
           controller.text = formatAmount(str.replaceAll(',', ''));
         },
         validator: (String? data) {

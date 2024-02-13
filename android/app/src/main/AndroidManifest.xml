@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="hogi_milk_admin"
+        android:label="Hogi Admin App"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

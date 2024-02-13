@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:hogi_milk_admin/global_variables.dart';
 import 'package:hogi_milk_admin/providers/auth_manager.dart';
 import 'package:hogi_milk_admin/providers/option_manager.dart';
 import 'package:hogi_milk_admin/providers/order_manager.dart';
 import 'package:hogi_milk_admin/providers/promote_provider.dart';
 import 'package:hogi_milk_admin/screens/authentication_screen.dart';
 import 'package:hogi_milk_admin/utils/global_scafflold.dart';
+import 'package:hogi_milk_admin/utils/topic_subscription.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -21,20 +22,15 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Request permission
-  // final messaging = FirebaseMessaging.instance;
-
-  // Set up foreground message handler
-  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //   messageStreamController.sink.add(message);
-  // });
-
   // Set up background message handler
- // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // subscribe to a topic.
-  const topic = 'news';
-  // await messaging.subscribeToTopic(topic);
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+  FirebaseSubscriptionManager subscriptionManager =
+      FirebaseSubscriptionManager(firebaseMessaging, prefs);
+  await subscriptionManager.refreshSubscriptionIfNeeded();
   runApp(const MyApp());
 }
 
